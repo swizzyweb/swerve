@@ -1,8 +1,5 @@
 // @ts-ignore
-import express, { Request, Response, Application } from "@swizzyweb/express";
-import { BrowserLogger, ILogger } from "@swizzyweb/swizzy-common";
-import { readFileSync } from "fs";
-import path from "path";
+import express, { Application } from "@swizzyweb/express";
 import { getArgs, installWebService, SwerveArgs } from "./utils";
 import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
 import os from "node:os";
@@ -12,8 +9,8 @@ export async function run() {
   let gLogger = new SwizzyWinstonLogger({
     port: 0,
     logLevel: process.env.LOG_LEVEL ?? "info",
-    appDataRoot: "unknown",
-    appName: `[swerve]`,
+    appDataRoot: ".",
+    appName: `swerve`,
     hostName: os.hostname(),
     pid: process.pid,
   });
@@ -23,38 +20,6 @@ export async function run() {
 
     const app = express();
     const webServices = await runWithApp({ app, args });
-    /*    gLogger = new SwizzyWinstonLogger({
-      logLevel: args.serviceArgs.logLevel ?? process.env.LOG_LEVEL ?? "info",
-      port: args.port,
-      logDir: args.appDataRoot,
-      appName: `[swerve]`,
-      hostName: os.hostname(),
-      pid: process.pid,
-    });
-
-    gLogger.debug(`Swerve Args: ${JSON.stringify(args)}`);
-
-    const PORT = args.port ?? 3005;
-    const webServices = [];
-    for (const serviceEntry of Object.entries(args.services)) {
-      const service = serviceEntry[1];
-      const packageName = service.packageName;
-      const importPathOrName = service.servicePath;
-      const webservice = await installWebService(
-        packageName,
-        importPathOrName,
-        PORT,
-        app,
-        {
-          appDataRoot: args.appDataRoot,
-          ...service,
-          ...service.serviceConfiguration,
-          ...args.serviceArgs,
-        },
-      );
-      webServices.push(webservice);
-    }
-*/
     const port = args.serviceArgs.port ?? 3005;
     gLogger.debug(`Starting express app...`);
     await app.listen(port, (err) => {
@@ -86,8 +51,8 @@ export async function runWithApp(props: RunWithAppArgs) {
   let gLogger = new SwizzyWinstonLogger({
     port: 0,
     logLevel: process.env.LOG_LEVEL ?? "info",
-    appDataRoot: "unknown",
-    appName: `[swerve]`,
+    appDataRoot: args.appDataRoot,
+    appName: `swerve`,
     hostName: os.hostname(),
     pid: process.pid,
   });
@@ -97,7 +62,7 @@ export async function runWithApp(props: RunWithAppArgs) {
       logLevel: args.serviceArgs.logLevel ?? process.env.LOG_LEVEL ?? "info",
       port: args.port,
       logDir: args.appDataRoot,
-      appName: `[swerve]`,
+      appName: `swerve`,
       hostName: os.hostname(),
       pid: process.pid,
     });
@@ -121,6 +86,7 @@ export async function runWithApp(props: RunWithAppArgs) {
           ...service.serviceConfiguration,
           ...args.serviceArgs,
         },
+        gLogger,
       );
       webServices.push(webservice);
     }

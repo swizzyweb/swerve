@@ -17,12 +17,13 @@ export async function installWebService(
   port: number,
   expressApp: any,
   serviceArgs: any,
+  gLogger: ILogger<any>,
 ) {
   const packageName = importPathOrName;
   // Probably use type of express app
 
   serviceArgs.appDataRoot;
-  const logger = new SwizzyWinstonLogger({
+  const logger = gLogger.clone({
     port,
     appName,
     appDataRoot: serviceArgs.appDataRoot,
