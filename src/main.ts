@@ -4,8 +4,32 @@ import { getArgs, installWebService, SwerveArgs } from "./utils";
 import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
 import os from "node:os";
 import process from "node:process";
+import { ISwerveManager, SwerveManager } from "./swerve";
 
+export async function runV2(): Promise<ISwerveManager> {
+  let gLogger = new SwizzyWinstonLogger({
+    port: 0,
+    logLevel: process.env.LOG_LEVEL ?? "info",
+    appDataRoot: ".",
+    appName: `swerve`,
+    hostName: os.hostname(),
+    pid: process.pid,
+  });
+
+  const swerveManager: ISwerveManager = new SwerveManager({});
+  try {
+    const args = await getArgs(process.argv, gLogger);
+    await swerveManager.run({ args });
+    return swerveManager;
+  } catch (e) {
+    gLogger.error(`Exception running v2 ${e}`);
+    throw e;
+  }
+}
 export async function run() {
+  if (true) {
+    return await runV2();
+  }
   let gLogger = new SwizzyWinstonLogger({
     port: 0,
     logLevel: process.env.LOG_LEVEL ?? "info",

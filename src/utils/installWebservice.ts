@@ -11,6 +11,7 @@ import path from "path";
 import os from "node:os";
 import process from "node:process";
 import { getServiceNameFromCurrentDirPackage } from "./getArgs";
+
 export async function installWebService(
   appName: string,
   importPathOrName: string,
@@ -36,10 +37,19 @@ export async function installWebService(
     );
     logger.debug(`Getting tool with path: ${importPathOrName}`);
 
-    const fullPath = require.resolve(importPathOrName, {
-      paths: [process.cwd()],
-    });
-    const tool = await require(fullPath); //require(packageName as string);
+    const importPath = importPathOrName.startsWith(".")
+      ? path.join(process.cwd(), importPathOrName)
+      : importPathOrName;
+    let fullPath;
+    if (importPathOrName === importPath) {
+      fullPath = await require.resolve(importPath, {
+        paths: [process.cwd()],
+      });
+    } else {
+      fullPath = importPath;
+    }
+
+    const tool = await import(fullPath); //require(fullPath); //require(packageName as string);
     logger.debug(`Got service with require`);
     logger.debug(JSON.stringify(tool));
 
@@ -47,6 +57,7 @@ export async function installWebService(
     const service = await tool.getWebservice({
       app: expressApp,
       packageName,
+      port,
       serviceArgs: { ...serviceArgs },
       logger,
     });
