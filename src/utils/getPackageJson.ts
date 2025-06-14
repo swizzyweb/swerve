@@ -29,18 +29,13 @@ export function getPackageJson(
       const pkgPath = path.join(dir, "package.json");
       if (fs.existsSync(pkgPath)) {
         const content = fs.readFileSync(pkgPath, "utf-8");
-        //        return JSON.parse(content);
         return { packageJson: JSON.parse(content), servicePath: dir };
       }
       dir = path.dirname(dir);
     }
 
-    return null;
+    throw new Error(`Could not parse package.json`);
   } catch (err) {
-    //console.error(
-    //      `Could not resolve package.json for "${packageNameOrPath}":`,
-    //    err,
-    //    );
     throw new Error(
       `Could not resolve package.json for "${packageNameOrPath}"`,
     );

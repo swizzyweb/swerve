@@ -23,15 +23,12 @@ export function getServiceNameFromCurrentDirPackage(logger: ILogger<any>) {
     throw e;
   }
 }
-/**
- *
- * */
+
 function getAppDataRoot(
   appDataRootPath: string | undefined,
   logger: ILogger<any>,
 ) {
   try {
-    //		const serviceName = process.argv[2];
     let directory;
     if (!appDataRootPath || appDataRootPath === ".") {
       directory = getServiceNameFromCurrentDirPackage(logger);
@@ -54,7 +51,7 @@ function getService(serviceName: string | undefined, logger: ILogger<any>) {
     if (!serviceName || serviceName === ".") {
       directory = getServiceNameFromCurrentDirPackage(logger);
       packageJson = getPackageJsonFromDirectory(directory);
-    } else if (serviceName.startsWith(".")) {
+    } else if (serviceName && serviceName.startsWith(".")) {
       directory = serviceName;
       const jsonPath = path.join(directory);
       packageJson = getPackageJsonFromDirectory(path.resolve(jsonPath));
@@ -69,13 +66,11 @@ function getService(serviceName: string | undefined, logger: ILogger<any>) {
     logger.debug(`response ${response}`);
     return response;
   } catch (e) {
-    //   logger.debug("Web service name not found at argv[2]");
     const ex = {
       message: "Error getting service name",
       serviceName,
       error: e,
     };
-    //    logger.debug(JSON.stringify(ex));
     throw ex;
   }
 }
@@ -96,7 +91,6 @@ function getDefaultArgs(): SwerveArgs {
     logLevel: "info",
     services: {},
     port: 3005,
-    //appDataRoot: path.join(__dirname + "../../appdata/"),
     serviceArgs: {},
   };
 }
@@ -115,14 +109,6 @@ async function getConfigValuesFromPath(
 ) {
   try {
     return await configParser.parse(configPath);
-    /*let data: string;
-    if (configPath.startsWith(".")) {
-      data = readFileSync(path.join(configPath), "utf-8");
-    } else {
-      data = readFileSync(configPath, "utf-8");
-    }
-
-    return JSON.parse(data);*/
   } catch (e: any) {
     logger.error(`Error occurred parsing config values from path`);
     throw {
@@ -156,12 +142,6 @@ function parseArgValue(val: string, logger: ILogger<any>) {
     );
   }
 
-  /*try {
-    return parseNumberArg(val);
-  } catch (e) {
-    logger.warn(`Exception occurred parsing arg value ${val} as number`);
-  }*/
-
   return val;
 }
 
@@ -172,16 +152,17 @@ export async function getArgs(
 ): Promise<SwerveArgs> {
   let argKey = undefined;
   let swerveArgs = getDefaultArgs();
-  let configFromFile;
+  let configFromFile: IConfig;
   const serviceCounts = new Map<string, number>();
   for (let i = 2; i < args.length; i++) {
     const nextVal = args[i];
     if (argKey) {
       if (argKey == CONFIG_ARG_KEY) {
-        /*        swerveArgs.serviceConfiguration = {
-          ...swerveArgs.serviceArgs,
-          ...getConfigValuesFromPath(nextVal),
-        };*/
+        if (configFromFile) {
+          throw new Error(
+            `Config file already specified, you can only specify one config file with the --config arg`,
+          );
+        }
         configFromFile = await getConfigValuesFromPath(nextVal, logger);
         argKey = undefined;
         continue;
@@ -208,34 +189,34 @@ export async function getArgs(
 
   swerveArgs.port =
     configFromFile?.port ?? swerveArgs.serviceArgs?.port ?? DEFAULT_PORT;
-  /*  for (const arg of Object.keys(configFromFile ?? {})) {
-    if (arg === "services") {
-      continue;
+
+  logger.debug(`configFromFile ${configFromFile}`);
+  if (configFromFile?.services) {
+    logger.debug(`ConfigFromFile has service`);
+    for (const serviceEntry of Object.entries(configFromFile.services)) {
+      const { servicePath } = serviceEntry[1];
+      if (!servicePath) {
+        throw new Error(
+          `ServicePath must either be a package name or path to a local package`,
+        );
+      }
+      const serviceDetails = getService(servicePath, logger);
+      const serviceName = path.join(
+        serviceDetails.packageJson.name!,
+        serviceEntry[0],
+      );
+      logger.debug(`ServiceName: ${serviceName}`);
+      swerveArgs.services[serviceEntry[0]] = await deepMerge(
+        await deepMerge(
+          swerveArgs.serviceArgs ?? {},
+          serviceEntry.values() ?? {},
+        ),
+        configFromFile.services[serviceEntry[0]],
+      );
     }
-
-    swerveArgs[arg] = deepMerge(swerveArgs, configFromFile[arg]);
-  }*/
-  for (const serviceEntry of Object.entries(configFromFile?.services ?? {})) {
-    const serviceName = serviceEntry[0];
-    swerveArgs.services[serviceName] = await deepMerge(
-      await deepMerge(
-        swerveArgs.serviceArgs ?? {},
-        serviceEntry.values() ?? {},
-      ),
-      configFromFile.services[serviceName],
-    );
   }
-
   swerveArgs = deepMerge(swerveArgs, configFromFile ?? {});
-
-  if (Object.keys(swerveArgs.services).length < 1) {
-    const { servicePath, packageJson } = getService(".", logger);
-    swerveArgs.services[packageJson.name] = {
-      servicePath,
-      packageJson,
-      serviceConfiguration: swerveArgs.serviceArgs,
-    };
-  }
+  logger.debug(`${JSON.stringify(swerveArgs)}`);
 
   if (
     swerveArgs.serviceArgs?.appDataRoot?.startsWith(".") ||
@@ -252,17 +233,15 @@ export async function getArgs(
     swerveArgs.appDataRoot = swerveArgs.serviceArgs.appDataRoot;
   }
 
-  /*  if (swerveArgs.port) {
-    if (typeof swerveArgs.port !== "number") {
-      swerveArgs.port = parseInt(swerveArgs.port);
-    } else {
-      swerveArgs.port = swerveArgs.port;
-    }
-  } else {
-    swerveArgs.port = DEFAULT_PORT;
-  }*/
-
-  //swerveArgs.serviceArgs = { ...swerveArgs.serviceArgs, ...configFromFile };
-  //swerveArgs.port = port ?? DEFAULT_PORT;
+  if (Object.keys(swerveArgs.services).length < 1) {
+    logger.info(`swerveArgs.services.length < 1`);
+    const { servicePath, packageJson } = getService(".", logger);
+    swerveArgs.services[packageJson.name] = {
+      servicePath,
+      packageJson,
+      appDataRoot: swerveArgs.appDataRoot,
+      ...swerveArgs.serviceArgs,
+    };
+  }
   return swerveArgs;
 }

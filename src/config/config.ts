@@ -4,7 +4,6 @@ export interface IService {
   packageName?: string;
   servicePath?: string;
   packageJson?: any;
-  serviceConfiguration: any;
 
   [key: string]: any;
 }

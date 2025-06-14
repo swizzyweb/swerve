@@ -6,11 +6,17 @@ independent swizzy web services.
 ### Supported commands
 
 swerve: synonym for swerven
+
 swerven: swerve with nodejs
+
 swerveb: swerve with bun
+
 swerved: swerve with deno
+
 swervenc: swerve with node clustered
+
 swervebc: swerve with bun clustered
+
 swervedc: swervice with deno clustered.
 
 ## Usage:
@@ -54,9 +60,7 @@ Note: cluster commands end with c
 --port : (default 3005) port value to run service
 --appDataRoot - (default project root) path to where appdata root directory will be placed, stores logs and service data
 --numThreads - (default num cpu's reported by os) (cluster only) number of threads to use in the cluster
-
-```
-
+--<argKey> - Any additional key passed will be a serviceArg passed to all services
 ```
 
 #### ie:
@@ -171,8 +175,45 @@ servedc
 
 ```
 
-```
+### What's passed to getWebservice in web service package
 
 ```
+{
+port: number,
+app: expressApp,
+packageName: string,
+logger: ILogger,
+appDataPath: "/appDataRoot/appdata/serviceName/"
+...serviceArgs // Anything else (from service config or swerve command args)
+}
+```
 
+## Service Configurations
+
+```
+{
+  "port": 3000, // Global port
+  "services": {
+    "friendlyLocalServiceName": {
+      "port": 3001, // Optional port override
+      "servicePath": ".", // if building package in current directory
+      "myArg1": "AnythingYouWant" // Custom serviceArg
+    },
+    "friendlyImportServiceName": {
+      "port": 3002,
+      "servicePath": "@swizzyweb/dyn-serve-web-service" // running installed web service package
+    },
+    "friendlyNeighborServiceName": {
+      "port": 3002,
+      "servicePath": "../my-friendly-neighbor-web-service",
+      "authCode": "SomeAuthCode"
+    }
+  }
+}
+```
+
+### Running
+
+```
+swerve --config my-web-service-config.json
 ```

@@ -1,6 +1,6 @@
 // @ts-ignore
 import express, { Application } from "@swizzyweb/express";
-import { getArgs, installWebService, SwerveArgs } from "./utils";
+import { installWebService, SwerveArgs } from "./utils";
 import { SwizzyWinstonLogger, WebService } from "@swizzyweb/swizzy-web-service";
 import os from "node:os";
 import process from "node:process";
@@ -27,13 +27,13 @@ export class SwerveManager implements ISwerveManager {
 
   async run(request: RunRequest): Promise<RunResponse> {
     const { args } = request;
-
     const newWebServices = await this.runWithArgs({
       args,
     });
     this.webServices.push(...newWebServices);
     return {};
   }
+
   async runWithArgs(request: RunRequest) {
     const { args } = request;
     const logLevel: string =
@@ -41,9 +41,10 @@ export class SwerveManager implements ISwerveManager {
     let gLogger = new SwizzyWinstonLogger({
       port: 0,
       logLevel,
-      appDataRoot: ".",
+      appDataRoot: args.appDataRoot ?? ".",
       appName: `swerve`,
       hostName: os.hostname(),
+      ownerName: "swerve",
       pid: process.pid,
     });
 
@@ -60,24 +61,22 @@ export class SwerveManager implements ISwerveManager {
         const app = this.apps[port];
 
         const service = serviceEntry[1];
-        const packageName = service.packageName;
+        const packageName = serviceEntry[0];
         const importPathOrName = service.servicePath;
+        gLogger.debug(`importPathOrName ${importPathOrName}`);
         const webservice = await installWebService(
           packageName,
           importPathOrName,
           port,
           app,
           {
+            appName: serviceEntry[0],
+            //            appDataRoot: args.appDataRoot,
             ...args.serviceArgs,
-            appDataRoot: args.appDataRoot,
             ...service,
-            ...service.serviceConfiguration,
             port,
           },
-          gLogger.clone({
-            appName: service.packageName,
-            logLevel: service.logLevel ?? logLevel,
-          }),
+          gLogger,
         );
         webServices.push(webservice);
       }
@@ -152,42 +151,6 @@ export class SwerveManager implements ISwerveManager {
     }
   }
 }
-
-/*export async function run() {
-  let gLogger = new SwizzyWinstonLogger({
-    port: 0,
-    logLevel: process.env.LOG_LEVEL ?? "info",
-    appDataRoot: ".",
-    appName: `swerve`,
-    hostName: os.hostname(),
-    pid: process.pid,
-  });
-
-  try {
-    const args = await getArgs(process.argv, gLogger);
-
-    const app = express();
-    const webServices = await runWithApp({ app, args });
-    const port = args.serviceArgs.port ?? 3005;
-    gLogger.debug(`Starting express app...`);
-    await app.listen(port, (err) => {
-      if (err) {
-        gLogger.log(err);
-      }
-      gLogger.info(
-        `${webServices
-          .map((service) => {
-            return service.name;
-          })
-          .join(",")} running on port ${port}`,
-      );
-    });
-  } catch (e) {
-    gLogger.error(
-      `Error occurred initializing service\n ${e.message}\n ${e.stack ?? {}}`,
-    );
-  }
-}*/
 
 interface RunWithAppArgs {
   app: Application;

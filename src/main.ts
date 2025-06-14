@@ -12,6 +12,7 @@ export async function runV2(): Promise<ISwerveManager> {
     logLevel: process.env.LOG_LEVEL ?? "info",
     appDataRoot: ".",
     appName: `swerve`,
+    ownerName: "swerve",
     hostName: os.hostname(),
     pid: process.pid,
   });
