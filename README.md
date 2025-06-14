@@ -179,9 +179,9 @@ servedc
 
 ```
 {
+packageName: string,
 port: number,
 app: expressApp,
-packageName: string,
 logger: ILogger,
 appDataPath: "/appDataRoot/appdata/serviceName/"
 ...serviceArgs // Anything else (from service config or swerve command args)

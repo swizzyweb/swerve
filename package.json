@@ -23,7 +23,7 @@
   "author": "Jason Gallagher",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "@swizzyweb/express": "^4.19.2",
+    "@swizzyweb/express": "^4.19.2-types",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.7.7",
     "jest": "^29.7.0",
@@ -32,8 +32,9 @@
   },
   "dependencies": {
     "@swizzyweb/swizzy-common": "^0.2.7",
-    "@swizzyweb/swizzy-web-service": "^0.4.4",
+    "@swizzyweb/swizzy-web-service": "^0.4.5",
     "bun": "^1.2.15",
+    "deno": "^2.3.6",
     "ts-node": "^10.9.2"
   },
   "repository": {

@@ -194,18 +194,20 @@ export async function getArgs(
   if (configFromFile?.services) {
     logger.debug(`ConfigFromFile has service`);
     for (const serviceEntry of Object.entries(configFromFile.services)) {
-      const { servicePath } = serviceEntry[1];
+      let { servicePath, packageName } = serviceEntry[1];
+      //        serviceEntry[1].servicePath ?? serviceEntry[1].packageName;
       if (!servicePath) {
-        throw new Error(
-          `ServicePath must either be a package name or path to a local package`,
-        );
+        serviceEntry[1].servicePath = packageName!;
+        //        throw new Error(
+        //        `servicePath or packageName must be set in service configurations`,
+        //      );
+      } else {
+        serviceEntry[1].packageName = getService(
+          servicePath,
+          logger,
+        )?.packageJson?.name;
       }
-      const serviceDetails = getService(servicePath, logger);
-      const serviceName = path.join(
-        serviceDetails.packageJson.name!,
-        serviceEntry[0],
-      );
-      logger.debug(`ServiceName: ${serviceName}`);
+      //      logger.debug(`ServiceName: ${}`);
       swerveArgs.services[serviceEntry[0]] = await deepMerge(
         await deepMerge(
           swerveArgs.serviceArgs ?? {},
@@ -214,6 +216,7 @@ export async function getArgs(
         configFromFile.services[serviceEntry[0]],
       );
     }
+    logger.debug(`packagedConfigFromFile into services`);
   }
   swerveArgs = deepMerge(swerveArgs, configFromFile ?? {});
   logger.debug(`${JSON.stringify(swerveArgs)}`);
@@ -243,5 +246,8 @@ export async function getArgs(
       ...swerveArgs.serviceArgs,
     };
   }
+  logger.debug(
+    `getArgs complete with parsed swerveArgs: ${JSON.stringify(swerveArgs)}`,
+  );
   return swerveArgs;
 }

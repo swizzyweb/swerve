@@ -10,7 +10,7 @@ const logger = new SwizzyWinstonLogger({
   pid: process.pid,
 });
 
-describe("sum", () => {
+describe("getArgs", () => {
   it("Sets port and custom arg", async () => {
     const args = [
       "/path/to/package/",
