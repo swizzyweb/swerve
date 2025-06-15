@@ -6,7 +6,11 @@ import {
   installWebService,
   SwerveArgs,
 } from "./utils";
-import { SwizzyWinstonLogger, WebService } from "@swizzyweb/swizzy-web-service";
+import {
+  AnyServer,
+  SwizzyWinstonLogger,
+  WebService,
+} from "@swizzyweb/swizzy-web-service";
 import os from "node:os";
 import process from "node:process";
 import { ILogger } from "@swizzyweb/swizzy-common";
@@ -15,22 +19,57 @@ import { mkdirSync } from "node:fs";
 
 export interface ISwerveManager {
   run(request: RunRequest): Promise<RunResponse>;
+  stop(request: StopRequest): Promise<void>;
+  getRunningWebServices(
+    props: GetRunningWebServiceRequest,
+  ): Promise<GetRunningWebServiceResponse>;
+}
+export interface GetRunningWebServiceRequest {}
+
+export interface GetRunningWebServiceResponse {
+  webservices: any;
+}
+export enum InstanceType {
+  webservice = "webservice",
+  stack = "stack",
+}
+
+export interface InstanceDetails {
+  instanceType: InstanceType;
+  instanceId: string;
+}
+
+export interface StopRequest {
+  instanceDetails: InstanceDetails;
 }
 
 export interface RunRequest {
   args?: SwerveArgs;
 }
 
-export interface RunResponse {}
+export interface RunResponse {
+  webServices: WebService<any>[];
+}
 
-export interface SwerveManagerProps {}
+export type Apps = {
+  [key: number]: {
+    app: Application;
+    server?: AnyServer;
+    services: { [instanceId: string]: any };
+  };
+};
+
+export interface SwerveManagerProps {
+  apps?: Apps;
+  webServices?: WebService<any>[];
+}
 
 export class SwerveManager implements ISwerveManager {
-  apps: { [key: number]: Application };
+  apps: Apps;
   webServices: WebService<any>[];
   constructor(props: SwerveManagerProps) {
-    this.apps = {};
-    this.webServices = [];
+    this.apps = props.apps ?? {};
+    this.webServices = props.webServices ?? [];
   }
 
   async run(request: RunRequest): Promise<RunResponse> {
@@ -39,13 +78,12 @@ export class SwerveManager implements ISwerveManager {
       args,
     });
     this.webServices.push(...newWebServices);
-    return {};
+    return { webServices: newWebServices };
   }
 
   async runWithArgs(request: RunRequest) {
     const { args } = request;
-    const logLevel: string =
-      process.env.LOG_LEVEL ?? args.serviceArgs.logLevel ?? "info";
+    const logLevel: string = process.env.LOG_LEVEL ?? args.logLevel ?? "info";
     let gLogger = new SwizzyWinstonLogger({
       port: 0,
       logLevel,
@@ -61,12 +99,12 @@ export class SwerveManager implements ISwerveManager {
       const newApps: { [port: number]: Application } = {};
       for (const serviceEntry of Object.entries(args.services)) {
         const port = serviceEntry[1].port ?? args.port;
-        if (!this.apps[port]) {
-          this.apps[port] = await express();
-          newApps[port] = this.apps[port];
+        if (!this.apps[`${port}`]) {
+          this.apps[`${port}`] = { app: await express(), services: {} };
+          newApps[`${port}`] = this.apps[`${port}`];
         }
 
-        const app = this.apps[port];
+        const app = this.apps[`${port}`].app;
 
         const service = serviceEntry[1];
         const packageName = serviceEntry[0];
@@ -87,14 +125,18 @@ export class SwerveManager implements ISwerveManager {
           gLogger,
         });
 
+        this.apps[`${port}`].services[webservice.instanceId] = webservice;
         webServices.push(webservice);
       }
 
       for (const newAppEntry of Object.entries(newApps)) {
-        const [port, newApp] = newAppEntry;
-        await newApp.listen(port, () => {
+        const [port, appRecord] = newAppEntry;
+        const newApp = appRecord.app;
+        const server = await newApp.listen(port, () => {
+          //          this.apps[port].services[newApp.instanceId] = {};
           gLogger.debug(`New app listening on port ${port}`);
         });
+        this.apps[`${port}`].server = server;
       }
 
       for (const webService of webServices) {
@@ -238,6 +280,100 @@ Failed to install web service, is it installed with NPM? Check package exists in
       gLogger.error(`Failed to install web service`);
       throw e; //new Error(exceptionMessage);
     }
+  }
+
+  async stop(request: StopRequest) {
+    const { instanceDetails } = request;
+    const { instanceId, instanceType } = instanceDetails;
+    const instanceIds = [];
+    if (!instanceId) {
+      throw new Error(`Instance id required to stop web service`);
+    }
+    if (instanceType === InstanceType.webservice) {
+      //      console.log(`Matched instance type`);
+      instanceIds.push(`${instanceId}`);
+    } else if (instanceType === InstanceType.stack) {
+      // TODO: implement
+      throw new Error(`Stack instance type is not yet supported`);
+    } else {
+      //     this.logger.error(`Invalid instance details ${instanceDetails}`);
+      throw new Error(`Invalid instance details provided`);
+    }
+    //    console.log(`instanceIds: ${instanceIds}`);
+    const webServices = this.webServices.filter((service) => {
+      //      console.log(`instanceId ${service.instanceId}`);
+      return instanceIds.includes(`${service.instanceId}`);
+    });
+
+    if (!webServices || webServices.length < 1) {
+      //console.error(webServices); //this.webServices);
+      throw new Error(
+        `WebService with instanceId ${instanceId} not found while attempting to stop`,
+      );
+    }
+
+    const ports = [];
+    for (const webService of webServices) {
+      const port = webService.port;
+      ports.push(port);
+      //console.log(webService);
+      webService.uninstall({});
+      const indexes = this.webServices
+        .map((val, index, array) => {
+          //console.log(
+          //            `instanceInSwerve: ${val.instanceId} instanceInWebService ${webService.instanceId}`,
+          //          );
+          if (val.instanceId == webService.instanceId) {
+            return index;
+          }
+        })
+        .filter((val) => val);
+      if (indexes.length > 1) {
+        throw new Error(
+          `Found multiple indexes for webservice instance ${webService.instanceId}`,
+        );
+      } else if (indexes.length == 0) {
+        throw new Error(
+          `No indexes for webservice instance ${webService.instanceId}`,
+        );
+      }
+      const index = indexes[0];
+      this.webServices.splice(index, 1);
+      if (!this.apps[`${port}`]?.services[webService.instanceId]) {
+        //console.log(`Apps does not contain service`);
+        // TODO: DO SOMETHING, log, throw maybe.
+      } else {
+        delete this.apps[`${port}`].services[webService.instanceId];
+      }
+    }
+
+    //cleanup apps if no more services
+
+    for (const port of ports) {
+      const { services, server, app } = this.apps[`${port}`];
+      if (!services || Object.keys(services).length == 0) {
+        if (server) {
+          server.close();
+        } else {
+          continue;
+          // TODO: do something, log throw etc
+        }
+        delete this.apps[`${port}`];
+      }
+    }
+  }
+
+  async getRunningWebServices(
+    props: GetRunningWebServiceRequest,
+  ): Promise<GetRunningWebServiceResponse> {
+    const webservices = {};
+    for (const webservice of this.webServices) {
+      webservices[webservice.instanceId] = webservice.toJson();
+    }
+
+    return {
+      webservices,
+    };
   }
 }
 

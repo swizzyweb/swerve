@@ -4,7 +4,7 @@ export interface IService {
   packageName?: string;
   servicePath?: string;
   packageJson?: any;
-
+  logLevel?: string;
   [key: string]: any;
 }
 
