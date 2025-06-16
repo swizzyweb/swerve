@@ -8,6 +8,7 @@ import {
 } from "./utils";
 import {
   AnyServer,
+  IWebService,
   SwizzyWinstonLogger,
   WebService,
 } from "@swizzyweb/swizzy-web-service";
@@ -27,7 +28,12 @@ export interface ISwerveManager {
 export interface GetRunningWebServiceRequest {}
 
 export interface GetRunningWebServiceResponse {
-  webservices: any;
+  webServices: {
+    [instanceId: string]: {
+      webService: any;
+      serviceConfig: any;
+    };
+  };
 }
 export enum InstanceType {
   webservice = "webservice",
@@ -55,7 +61,13 @@ export type Apps = {
   [key: number]: {
     app: Application;
     server?: AnyServer;
-    services: { [instanceId: string]: any };
+    services: {
+      [instanceId: string]: {
+        webService: IWebService;
+        serviceArgs: SwerveArgs;
+        runRequest: RunRequest;
+      };
+    };
   };
 };
 
@@ -64,9 +76,16 @@ export interface SwerveManagerProps {
   webServices?: WebService<any>[];
 }
 
+export interface WebServiceConfiguration {}
+
+type WebServiceConfigurations = {
+  [instanceId: string]: WebServiceConfiguration;
+};
+
 export class SwerveManager implements ISwerveManager {
   apps: Apps;
   webServices: WebService<any>[];
+  configurations: WebServiceConfigurations;
   constructor(props: SwerveManagerProps) {
     this.apps = props.apps ?? {};
     this.webServices = props.webServices ?? [];
@@ -110,6 +129,12 @@ export class SwerveManager implements ISwerveManager {
         const packageName = serviceEntry[0];
         const importPathOrName = service.servicePath ?? service.packageName;
         gLogger.debug(`importPathOrName ${importPathOrName}`);
+        const serviceArgs: SwerveArgs = {
+          ...service,
+          ...service.serviceConfiguration,
+          ...args.serviceArgs,
+        };
+
         const webservice = await this.installWebService({
           serviceKey: serviceEntry[0],
           packageName,
@@ -117,15 +142,15 @@ export class SwerveManager implements ISwerveManager {
           port,
           app,
           appDataRoot: args.appDataRoot,
-          serviceArgs: {
-            ...service,
-            ...service.serviceConfiguration,
-            ...args.serviceArgs,
-          },
+          serviceArgs,
           gLogger,
         });
 
-        this.apps[`${port}`].services[webservice.instanceId] = webservice;
+        this.apps[`${port}`].services[webservice.instanceId] = {
+          webService: webservice,
+          serviceArgs,
+          runRequest: request,
+        };
         webServices.push(webservice);
       }
 
@@ -368,11 +393,17 @@ Failed to install web service, is it installed with NPM? Check package exists in
   ): Promise<GetRunningWebServiceResponse> {
     const webservices = {};
     for (const webservice of this.webServices) {
-      webservices[webservice.instanceId] = webservice.toJson();
+      const instanceId = webservice.instanceId;
+      const { runRequest, serviceArgs } =
+        this.apps[webservice.port].services[instanceId];
+      webservices[instanceId] = {
+        webService: webservice.toJson(),
+        serviceConfig: runRequest?.args,
+      };
     }
 
     return {
-      webservices,
+      webServices: webservices,
     };
   }
 }
