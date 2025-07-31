@@ -342,17 +342,16 @@ Failed to install web service, is it installed with NPM? Check package exists in
       const port = webService.port;
       ports.push(port);
       //console.log(webService);
-      webService.uninstall({});
-      const indexes = this.webServices
-        .map((val, index, array) => {
-          //console.log(
-          //            `instanceInSwerve: ${val.instanceId} instanceInWebService ${webService.instanceId}`,
-          //          );
-          if (val.instanceId == webService.instanceId) {
-            return index;
-          }
-        })
-        .filter((val) => val);
+      await webService.uninstall({});
+      const indexes = this.webServices.map((val, index, array) => {
+        //console.log(
+        //            `instanceInSwerve: ${val.instanceId} instanceInWebService ${webService.instanceId}`,
+        //          );
+        if (val.instanceId == webService.instanceId) {
+          return index;
+        }
+      });
+      //.filter((val) => val);
       if (indexes.length > 1) {
         throw new Error(
           `Found multiple indexes for webservice instance ${webService.instanceId}`,
