@@ -4,10 +4,10 @@ import { getPackageJsonFromDirectory, ILogger } from "@swizzyweb/swizzy-common";
 import { readFileSync } from "fs";
 import path from "path";
 import process from "node:process";
-import { IConfig, IService, KeyValue } from "../config/config";
-import { SwerveConfigParser } from "../config/config-parser";
+import { IConfig, IService, KeyValue } from "../config/index.js";
+import { SwerveConfigParser } from "../config/config-parser.js";
 import { deepMerge } from "@swizzyweb/swizzy-common";
-import { getPackageJson } from "./getPackageJson";
+import { getPackageJson } from "./getPackageJson.js";
 
 function getHelpText() {
   return `Help --
@@ -50,11 +50,17 @@ function getService(serviceName: string | undefined, logger: ILogger<any>) {
     let packageJson;
     if (!serviceName || serviceName === ".") {
       directory = getServiceNameFromCurrentDirPackage(logger);
-      packageJson = getPackageJsonFromDirectory(directory);
+      //      packageJson = getPackageJsonFromDirectory(directory);
+      const packageResult = getPackageJson(directory);
+      packageJson = packageResult.packageJson;
+      directory = packageResult.servicePath;
     } else if (serviceName && serviceName.startsWith(".")) {
-      directory = serviceName;
-      const jsonPath = path.join(directory);
-      packageJson = getPackageJsonFromDirectory(path.resolve(jsonPath));
+      //      directory = serviceName;
+      //      const jsonPath = path.join(serviceName);
+      //      packageJson = getPackageJsonFromDirectory(path.resolve(jsonPath));
+      const packageResult = getPackageJson(serviceName);
+      packageJson = packageResult.packageJson;
+      directory = packageResult.servicePath;
     } else {
       return getPackageJson(serviceName);
     }
@@ -202,10 +208,9 @@ export async function getArgs(
         //        `servicePath or packageName must be set in service configurations`,
         //      );
       } else {
-        serviceEntry[1].packageName = getService(
-          servicePath,
-          logger,
-        )?.packageJson?.name;
+        const serviceData = getService(servicePath, logger);
+        serviceEntry[1].packageName = serviceData.packageJson?.name;
+        serviceEntry[1].servicePath = serviceData.servicePath;
       }
       //      logger.debug(`ServiceName: ${}`);
       swerveArgs.services[serviceEntry[0]] = await deepMerge(

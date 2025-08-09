@@ -1,8 +1,9 @@
 {
   "name": "@swizzyweb/swerve",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "swizzy-swerve is a bootstrapper for swizzy web services. This package will bootstrap and run independent swizzy web services.",
   "main": "dist/index.js",
+  "type": "module",
   "bin": {
     "swerve": "dist/bootstrapNode.js",
     "swerven": "dist/bootstrapNode.js",
@@ -17,7 +18,7 @@
     "build": "tsc",
     "server:ts": "ts-node ./src/bootstrap.ts",
     "server": "node dist/bootstrap.js",
-    "test": "jest",
+    "test": "node --test ./test**/*.spec.ts",
     "coverage": "jest --coverage"
   },
   "author": "Jason Gallagher",

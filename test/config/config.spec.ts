@@ -1,4 +1,4 @@
-import { IConfig } from "../../src/config/config";
+import { IConfig } from "../../dist/config/config.js";
 
 describe(`Config tests`, () => {
   it("Should accept service configuration", () => {

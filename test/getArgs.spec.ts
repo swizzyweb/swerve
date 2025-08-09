@@ -1,7 +1,12 @@
 import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
-import { getArgs } from "../src/utils";
+import { getArgs } from "../dist/utils/getArgs.js";
 import path from "node:path/posix";
+import test from "node:test";
+import assert from "node:assert";
+import { fileURLToPath } from "node:url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const logger = new SwizzyWinstonLogger({
   port: 80,
   appName: `AppName`,
@@ -10,8 +15,8 @@ const logger = new SwizzyWinstonLogger({
   pid: process.pid,
 });
 
-describe("getArgs", () => {
-  it("Sets port and custom arg", async () => {
+test("getArgs", () => {
+  test.it("Sets port and custom arg", async () => {
     const args = [
       "/path/to/package/",
       "run.js",
@@ -23,11 +28,11 @@ describe("getArgs", () => {
       "JasonIsTheBest",
     ];
     let result = await getArgs(args, logger);
-    expect(result.port).toEqual(80);
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+    assert.equal(result.port, 80);
+    assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
   });
 
-  it("sets appDataRoot", async () => {
+  test.it("sets appDataRoot", async () => {
     const args = [
       "/path/to/package/",
       "run.js",
@@ -39,11 +44,11 @@ describe("getArgs", () => {
       "JasonIsTheBest",
     ];
     let result = await getArgs(args, logger);
-    expect(result.port).toEqual(80);
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+    assert.equal(result.port, 80);
+    assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
   });
 
-  it("Throws on invalid config file path", async () => {
+  test.it("Throws on invalid config file path", async () => {
     const configPath = "/some/invalid/path";
     const args = [
       "/path/to/package/",
@@ -60,15 +65,17 @@ describe("getArgs", () => {
     try {
       let result = await getArgs(args, logger);
     } catch (e) {
-      expect(e).toEqual({
-        message:
-          "Unexpected error occurred when attempting to read serviceConfiguration file",
-        configFilePath: configPath,
-        error: expect.anything(),
-      });
+      assert.deepEqual(
+        { message: e.message, configFilePath: configPath },
+        {
+          message:
+            "Unexpected error occurred when attempting to read serviceConfiguration file",
+          configFilePath: configPath,
+        },
+      );
     }
   });
-  it("Should read config values from config", async () => {
+  test.it("Should read config values from config", async () => {
     const configPath = path.join(__dirname, "./config/serviceConfig.json");
     const args = [
       "/path/to/package/",
@@ -83,83 +90,89 @@ describe("getArgs", () => {
       configPath,
     ];
     let result = await getArgs(args, logger);
-    expect(result.port).toEqual(3000);
+    assert.equal(result.port, 3000);
     const service = result.services["my-first-web-service1"];
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+    assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
 
-    expect(service.someOtherArgFromConfig).toEqual("ThisIsTheArgValue");
-    expect(service.shouldTimeout).toEqual(true);
-    expect(service.nestedJson).toEqual({
+    assert.equal(service.someOtherArgFromConfig, "ThisIsTheArgValue");
+    assert.equal(service.shouldTimeout, true);
+    assert.deepEqual(service.nestedJson, {
       hello: "world",
       none: false,
     });
   });
 
-  it("Should override parameters in order of args, config file last", async () => {
-    const configPath = path.join(__dirname, "./config/serviceConfig.json");
-    const args = [
-      "/path/to/package/",
-      "run.js",
-      "--port",
-      "80",
-      "--appDataRoot",
-      ".",
-      "--someCustomArg",
-      "JasonIsTheBest",
-      "--someNumberINeed",
-      "1000",
-      "--config",
-      configPath,
-    ];
-    let result = await getArgs(args, logger);
+  test.it(
+    "Should override parameters in order of args, config file last",
+    async () => {
+      const configPath = path.join(__dirname, "./config/serviceConfig.json");
+      const args = [
+        "/path/to/package/",
+        "run.js",
+        "--port",
+        "80",
+        "--appDataRoot",
+        ".",
+        "--someCustomArg",
+        "JasonIsTheBest",
+        "--someNumberINeed",
+        "1000",
+        "--config",
+        configPath,
+      ];
+      let result = await getArgs(args, logger);
 
-    const service = result.services["my-first-web-service1"];
-    expect(service.someOtherArgFromConfig).toEqual("ThisIsTheArgValue");
+      const service = result.services["my-first-web-service1"];
+      assert.equal(service.someOtherArgFromConfig, "ThisIsTheArgValue");
 
-    expect(result.port).toEqual(3000);
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+      assert.equal(result.port, 3000);
+      assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
 
-    expect(result.serviceArgs?.someNumberINeed).toEqual(1000);
-    expect(service.shouldTimeout).toEqual(true);
-    expect(service.nestedJson).toEqual({
-      hello: "world",
-      none: false,
-    });
-  });
+      assert.equal(result.serviceArgs?.someNumberINeed, 1000);
+      assert.equal(service.shouldTimeout, true);
+      assert.deepEqual(service.nestedJson, {
+        hello: "world",
+        none: false,
+      });
+    },
+  );
 
-  it("Should override parameters in order of args, config file first", async () => {
-    const configPath = path.join(__dirname, "./config/serviceConfig.json");
-    const args = [
-      "/path/to/package/",
-      "run.js",
-      "--port",
-      "80",
-      "--appDataRoot",
-      ".",
-      "--someCustomArg",
-      "JasonIsTheBest",
-      "--config",
-      configPath,
-      "--someNumberINeed",
-      "1000",
-    ];
-    let result = await getArgs(args, logger);
-    const service = result.services["my-first-web-service1"];
-    expect(service.someOtherArgFromConfig).toEqual("ThisIsTheArgValue");
-    expect(result.port).toEqual(3000);
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+  test.it(
+    "Should override parameters in order of args, config file first",
+    async () => {
+      const configPath = path.join(__dirname, "./config/serviceConfig.json");
+      const args = [
+        "/path/to/package/",
+        "run.js",
+        "--port",
+        "80",
+        "--appDataRoot",
+        ".",
+        "--someCustomArg",
+        "JasonIsTheBest",
+        "--config",
+        configPath,
+        "--someNumberINeed",
+        "1000",
+      ];
+      let result = await getArgs(args, logger);
+      const service = result.services["my-first-web-service1"];
+      assert.equal(service.someOtherArgFromConfig, "ThisIsTheArgValue");
+      assert.equal(result.port, 3000);
+      assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+      assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+      assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
 
-    expect(result.serviceArgs?.someNumberINeed).toEqual(1000);
-    expect(service.shouldTimeout).toEqual(true);
-    expect(service.nestedJson).toEqual({
-      hello: "world",
-      none: false,
-    });
-  });
+      assert.equal(result.serviceArgs?.someNumberINeed, 1000);
+      assert.equal(service.shouldTimeout, true);
+      assert.deepEqual(service.nestedJson, {
+        hello: "world",
+        none: false,
+      });
+    },
+  );
 
-  it("Should getService from args", async () => {
+  test.it("Should getService from args", async () => {
     const args = [
       "/path/to/package/",
       "run.js",
@@ -172,43 +185,46 @@ describe("getArgs", () => {
       "JasonIsTheBest",
     ];
     let result = await getArgs(args, logger);
-    expect(result.port).toEqual(80);
+    assert.equal(result.port, 80);
 
     const service = result.services["my-first-web-service1"];
-    //    expect(result.serviceArgs.appDataRoot).toEqual(".");
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+    //    expect(result.serviceArgs.appDataRoot, ".");
+    assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
   });
 
-  it("Should set appDataRoot to current package root by default", async () => {
-    const configPath = path.join(__dirname, "./config/serviceConfig.json");
-    const args = [
-      "/path/to/package/",
-      "run.js",
-      "--port",
-      "80",
-      "--someCustomArg",
-      "JasonIsTheBest",
-      "--config",
-      configPath,
-      "--someNumberINeed",
-      "1000",
-    ];
-    let result = await getArgs(args, logger);
+  test.it(
+    "Should set appDataRoot to current package root by default",
+    async () => {
+      const configPath = path.join(__dirname, "./config/serviceConfig.json");
+      const args = [
+        "/path/to/package/",
+        "run.js",
+        "--port",
+        "80",
+        "--someCustomArg",
+        "JasonIsTheBest",
+        "--config",
+        configPath,
+        "--someNumberINeed",
+        "1000",
+      ];
+      let result = await getArgs(args, logger);
 
-    const service = result.services["my-first-web-service1"];
-    expect(service.someOtherArgFromConfig).toEqual("ThisIsTheArgValue");
-    expect(result.port).toEqual(3000);
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    expect(result.serviceArgs?.someCustomArg!).toEqual("JasonIsTheBest");
+      const service = result.services["my-first-web-service1"];
+      assert.equal(service.someOtherArgFromConfig, "ThisIsTheArgValue");
+      assert.equal(result.port, 3000);
+      assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+      assert.equal(result.serviceArgs?.someCustomArg!, "JasonIsTheBest");
 
-    expect(result.serviceArgs?.someNumberINeed!).toEqual(1000);
-    expect(service.shouldTimeout).toEqual(true);
-    expect(service.nestedJson).toEqual({
-      hello: "world",
-      none: false,
-    });
-  });
-  it("Should create multiple services", async () => {
+      assert.equal(result.serviceArgs?.someNumberINeed!, 1000);
+      assert.equal(service.shouldTimeout, true);
+      assert.deepEqual(service.nestedJson, {
+        hello: "world",
+        none: false,
+      });
+    },
+  );
+  test.it("Should create multiple services", async () => {
     const configPath = path.join(__dirname, "./config/serviceConfig.json");
     const args = [
       "/path/to/package/",
@@ -229,19 +245,19 @@ describe("getArgs", () => {
     let result = await getArgs(args, logger);
 
     const service = result.services["my-first-web-service1"];
-    expect(result.port).toEqual(91);
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    //   expect(service.someCustomArg).toEqual("JasonIsTheBest");
+    assert.equal(result.port, 91);
+    assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+    //   expect(service.someCustomArg, "JasonIsTheBest");
 
-    //    expect(service.someNumberINeed).toEqual(1000);
-    //    expect(service.shouldTimeout).toEqual(true);
-    //    expect(service.nestedJson).toEqual({
+    //    expect(service.someNumberINeed, 1000);
+    //    expect(service.shouldTimeout, true);
+    //    expect(service.nestedJson, {
     //      hello: "world",
     //      none: false,
     //    });
-    //    expect(result.services.length).toEqual(2);
+    //    expect(result.services.length, 2);
   });
-  it("Should create absolute path appdata directory", async () => {
+  test.it("Should create absolute path appdata directory", async () => {
     const configPath = path.join(__dirname, "./config/serviceConfig.json");
     const appDataRoot = "/tmp/swizzy-dyn-serve-web-service";
     const args = [
@@ -263,32 +279,35 @@ describe("getArgs", () => {
       appDataRoot,
     ];
     let result = await getArgs(args, logger);
-    expect(result.appDataRoot).toEqual(appDataRoot);
+    assert.equal(result.appDataRoot, appDataRoot);
   });
 
-  it("Should resolve package.json from package name", async () => {
+  test.it("Should resolve package.json from package name", async () => {
     const config = await getArgs(["@swizzyweb/swerve"], logger);
-    expect(config.services["@swizzyweb/swerve"].packageJson).toBeDefined();
-    expect(config.services["@swizzyweb/swerve"].packageJson.name).toEqual(
+    assert(config.services["@swizzyweb/swerve"].packageJson);
+    assert.equal(
+      config.services["@swizzyweb/swerve"].packageJson.name,
       "@swizzyweb/swerve",
     );
   });
 
-  it("Should resolve package.json from absolute path", async () => {
+  test.it("Should resolve package.json from absolute path", async () => {
     const config = await getArgs([path.join(__dirname, "..")], logger);
-    expect(config.services["@swizzyweb/swerve"].packageJson).toBeDefined();
-    expect(config.services["@swizzyweb/swerve"].packageJson.name).toEqual(
+    assert(config.services["@swizzyweb/swerve"].packageJson);
+    assert.equal(
+      config.services["@swizzyweb/swerve"].packageJson.name,
       "@swizzyweb/swerve",
     );
   });
-  it("Should not throw with no args", async () => {
+  test.it("Should not throw with no args", async () => {
     const config = await getArgs([], logger);
-    expect(config.services["@swizzyweb/swerve"].packageJson).toBeDefined();
-    expect(config.services["@swizzyweb/swerve"].packageJson.name).toEqual(
+    assert(config.services["@swizzyweb/swerve"].packageJson);
+    assert.equal(
+      config.services["@swizzyweb/swerve"].packageJson.name,
       "@swizzyweb/swerve",
     );
   });
-  it("Should work with no port", async () => {
+  test.it("Should work with no port", async () => {
     const configPath = path.join(__dirname, "./config/serviceConfig.json");
     const args = [
       "/path/to/package/",
@@ -302,11 +321,11 @@ describe("getArgs", () => {
     ];
     let result = await getArgs(args, logger);
     const service = result.services["my-first-web-service1"];
-    expect(result.port).toEqual(3005);
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    expect(result.appDataRoot).toEqual(path.join(__dirname, ".."));
-    expect(result.serviceArgs?.someCustomArg).toEqual("JasonIsTheBest");
+    assert.equal(result.port, 3005);
+    assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+    assert.equal(result.appDataRoot, path.join(__dirname, ".."));
+    assert.equal(result.serviceArgs?.someCustomArg, "JasonIsTheBest");
 
-    expect(result.serviceArgs?.someNumberINeed).toEqual(1000);
+    assert.equal(result.serviceArgs?.someNumberINeed, 1000);
   });
 });

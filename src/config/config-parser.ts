@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { IConfig } from "./config";
+import { IConfig } from "./config.js";
 import path from "path";
 
 export interface IAsyncConfigParser<CONFIG> {

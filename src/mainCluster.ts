@@ -3,12 +3,12 @@
 import cluster from "node:cluster";
 import http from "node:http";
 import os from "node:os";
-import { run } from "./main";
+import { run } from "./main.js";
 import process from "node:process";
 import { BrowserLogger } from "@swizzyweb/swizzy-common";
 import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
 
-import { getArgs } from "./utils";
+import { getArgs } from "./utils/index.js";
 /**
  * extra arg:
  * numThreads - number, default to num cpu cores from os

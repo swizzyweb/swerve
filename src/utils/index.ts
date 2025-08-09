@@ -1,2 +1,2 @@
-export * from "./getArgs";
-export * from "./installWebservice";
+export * from "./getArgs.js";
+export * from "./installWebservice.js";

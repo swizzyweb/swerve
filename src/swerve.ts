@@ -5,7 +5,7 @@ import {
   getLoggerForService,
   installWebService,
   SwerveArgs,
-} from "./utils";
+} from "./utils/index.js";
 import {
   AnyServer,
   IWebService,
@@ -204,7 +204,7 @@ export class SwerveManager implements ISwerveManager {
         const service = serviceEntry[1];
         const packageName = service.packageName;
         const importPathOrName =
-          service.servicePath ?? service.serviceArgs.srvicePath ?? packageName;
+          service.servicePath ?? service.serviceArgs.servicePath ?? packageName;
         const webservice = await this.installWebService({
           serviceKey: serviceEntry[0],
           packageName,

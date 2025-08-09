@@ -1,2 +1,2 @@
-export * from "./swerve";
-export * from "./config";
+export * from "./swerve.js";
+export * from "./config/index.js";

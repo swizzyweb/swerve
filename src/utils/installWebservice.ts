@@ -10,8 +10,9 @@ import { readFileSync } from "fs";
 import path from "path";
 import os from "node:os";
 import process from "node:process";
-import { getServiceNameFromCurrentDirPackage } from "./getArgs";
+import { getServiceNameFromCurrentDirPackage } from "./getArgs.js";
 import { mkdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 export async function installWebService(
   appName: string,
@@ -30,7 +31,7 @@ export async function installWebService(
 
     gLogger.debug(`Getting tool with path: ${importPathOrName}`);
 
-    const fullPath = await getFullImportPath(importPathOrName);
+    const fullPath = importPathOrName; //await getFullImportPath(importPathOrName);
     const tool = await import(fullPath); //require(fullPath); //require(packageName as string);
 
     gLogger.debug(`Got service with require: ${JSON.stringify(tool)}`);
@@ -86,9 +87,15 @@ export async function getFullImportPath(
     : importPathOrName;
   let fullPath;
   if (importPathOrName === importPath) {
-    fullPath = await require.resolve(importPath, {
-      paths: [process.cwd()],
-    });
+    const fullUrl = import.meta.resolve(importPath, import.meta.url);
+    fullPath = fileURLToPath(fullUrl);
+    //    const pkg = await import(fullUrl, {
+    //      assert: { type: "json" },
+    //    });
+
+    //      await require.resolve(importPath, {
+    //      paths: [process.cwd()],
+    //    });
   } else {
     fullPath = importPath;
   }
