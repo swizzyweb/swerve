@@ -133,7 +133,7 @@ We support bun deno and nodejs for runtimes
 
 swerven # node
 swerveb # bun
-swerved # deno
+swerved # deno (Requires deno to be installed globally)
 
 swerven # default (points to swerven as of 0.2.4)
 
