@@ -1,25 +1,33 @@
 {
   "name": "@swizzyweb/swerve",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "swizzy-swerve is a bootstrapper for swizzy web services. This package will bootstrap and run independent swizzy web services.",
   "main": "dist/index.js",
   "type": "module",
+  "files": [
+    "./dist",
+    "./dist/main.ts",
+    "./package.json"
+  ],
   "bin": {
-    "swerve": "dist/bootstrapNode.js",
-    "swerven": "dist/bootstrapNode.js",
-    "swerveb": "dist/bootstrapBun.js",
-    "swerved": "dist/bootstrapDeno.js",
-    "swervec": "dist/bootstrapNodeCluster.js",
-    "swervenc": "dist/bootstrapNodeCluster.js",
-    "swervebc": "dist/bootstrapBunCluster.js",
-    "swervedc": "dist/bootstrapDenoCluster.js"
+    "main.js": "./dist/main.js",
+    "swerve": "./dist/bootstrapNode.js",
+    "swerven": "./dist/bootstrapNode.js",
+    "swerveb": "./dist/bootstrapBun.js",
+    "swerved": "./dist/bootstrapDeno.sh",
+    "swervec": "./dist/bootstrapNodeCluster.js",
+    "swervenc": "./dist/bootstrapNodeCluster.js",
+    "swervebc": "./dist/bootstrapBunCluster.js",
+    "swervedc": "./dist/bootstrapDenoCluster.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp bin/* dist",
     "server:ts": "ts-node ./src/bootstrap.ts",
     "server": "node dist/bootstrap.js",
-    "test": "node --test ./test**/*.spec.ts",
-    "coverage": "jest --coverage"
+    "test": "node --test ./test**/*.spec.ts test/*.spec.ts",
+    "coverage": "node --test ./test**/*.spec.ts test/*.spec.ts",
+    "compile:bun": "bun build src/bootstrapNode.ts --compile --outfile swerveb",
+    "compile:deno": "deno compile dist/bootstrapDeno.js"
   },
   "author": "Jason Gallagher",
   "license": "GPL-3.0-only",
@@ -32,10 +40,11 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@swizzyweb/swizzy-common": "^0.2.7",
-    "@swizzyweb/swizzy-web-service": "^0.4.5",
+    "@swizzyweb/swerve-manager": "^0.1.0",
+    "@swizzyweb/swizzy-common": "^0.3.0",
+    "@swizzyweb/swizzy-web-service": "^0.5.0",
     "bun": "^1.2.15",
-    "deno": "^2.3.6",
+    "deno": "^2.4.3",
     "ts-node": "^10.9.2"
   },
   "repository": {

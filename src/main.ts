@@ -1,10 +1,15 @@
 // @ts-ignore
 import express, { Application } from "@swizzyweb/express";
-import { getArgs, installWebService, SwerveArgs } from "./utils/index.js";
+import {
+  getArgs,
+  installWebService,
+  SwerveArgs,
+  ISwerveManager,
+  SwerveManager,
+} from "@swizzyweb/swerve-manager";
 import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
 import os from "node:os";
 import process from "node:process";
-import { ISwerveManager, SwerveManager } from "./swerve.js";
 
 export async function runV2(): Promise<ISwerveManager> {
   let gLogger = new SwizzyWinstonLogger({

@@ -1,4 +1,4 @@
-#!/usr/bin/env deno
+//#!/usr/bin/env -S deno run --allow-read --allow-net
 
 import cluster from "node:cluster";
 import http from "node:http";
