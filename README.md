@@ -3,6 +3,24 @@
 swizzy-swerve is a bootstrapper for swizzy web services. This package will bootstrap and run
 independent swizzy web services.
 
+## Getting started
+
+### Install with npm
+
+```
+npm install --registry=https://npm.swizzyweb.com @swizzyweb/swerve
+```
+
+### Sample Apps
+
+#### Frontend template
+
+https://github.com/swizzyweb/swizzy-frontend-template-web-service
+
+#### Backend template
+
+https://github.com/swizzyweb/swizzy-backend-template-web-service
+
 ### Supported commands
 
 swerve: synonym for swerven
