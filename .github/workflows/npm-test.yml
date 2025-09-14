@@ -24,6 +24,6 @@ jobs:
 
     - name: Build
       run: |
-        npm install
+        npm install --registry=https://npm.swizzyweb.com
         npm run build
         npm run test
