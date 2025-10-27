@@ -29,7 +29,6 @@ export function getPackageJson(
 
     // Step 2: Traverse upward to find the nearest package.json
     let dir = fileURLToPath(resolvedEntry); //path.dirname(resolvedEntry);
-    console.log(dir);
     while (dir !== path.parse(dir).root) {
       const pkgPath = path.join(dir, "package.json");
       if (fs.existsSync(pkgPath)) {
@@ -40,10 +39,7 @@ export function getPackageJson(
         } else if (dir.startsWith(".")) {
           dir = path.join(process.cwd(), dir);
         }
-        console.log(dir);
         const entrypoint = path.join(dir, packageJson.main);
-        console.log(entrypoint);
-        console.error(`Entrypoint is ${entrypoint}`);
         //        throw `Entrypoint is ${entrypoint}`;
         return { packageJson, servicePath: entrypoint };
       }

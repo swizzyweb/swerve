@@ -259,11 +259,18 @@ export class SwerveManager implements ISwerveManager {
 
       gLogger.debug(`Getting tool with path: ${importPathOrName}`);
 
-      const fullPath = await getFullImportPath(importPathOrName);
-      const tool = await import(fullPath); //require(fullPath); //require(packageName as string);
-
-      gLogger.debug(`Got service with require: ${JSON.stringify(tool)}`);
-      gLogger.debug(`Getting web service from tool...`);
+      let tool;
+      try {
+        gLogger.debug(`Got service with require: ${JSON.stringify(tool)}`);
+        gLogger.debug(`Getting web service from tool...`);
+        tool = await import(importPathOrName);
+      } catch (e: any) {
+        gLogger.warn(
+          `Error importing raw import path ${importPathOrName}, attempting again with fullImportPath. Err: ${e?.message}, stack: ${e?.stack}`,
+        );
+        const fullPath = await getFullImportPath(importPathOrName);
+        tool = await import(fullPath); //require(fullPath); //require(packageName as string);
+      }
 
       const appDataPath = path.join(appDataRoot, "appdata", serviceKey);
       mkdirSync(appDataPath, { recursive: true });
@@ -277,8 +284,8 @@ export class SwerveManager implements ISwerveManager {
       gLogger.debug(`serviceArgs for ${packageName}: ${serviceArgs}`);
       const service = await tool.getWebservice({
         appDataPath,
-        ...serviceArgs,
         port,
+        ...serviceArgs,
         app,
         packageName,
         serviceArgs: { ...serviceArgs },
