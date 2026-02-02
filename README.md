@@ -235,3 +235,5 @@ appDataPath: "/appDataRoot/appdata/serviceName/"
 ```
 swerve --config my-web-service-config.json
 ```
+
+# Breaking Changes

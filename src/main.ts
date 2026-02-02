@@ -1,5 +1,4 @@
-// @ts-ignore
-import express, { Application } from "@swizzyweb/express";
+import { Application } from "express";
 import {
   getArgs,
   installWebService,
@@ -35,39 +34,6 @@ export async function runV2(): Promise<ISwerveManager> {
 export async function run() {
   if (true) {
     return await runV2();
-  }
-  let gLogger = new SwizzyWinstonLogger({
-    port: 0,
-    logLevel: process.env.LOG_LEVEL ?? "info",
-    appDataRoot: ".",
-    appName: `swerve`,
-    hostName: os.hostname(),
-    pid: process.pid,
-  });
-
-  try {
-    const args = await getArgs(process.argv, gLogger);
-
-    const app = express();
-    const webServices = await runWithApp({ app, args });
-    const port = args.serviceArgs.port ?? 3005;
-    gLogger.debug(`Starting express app...`);
-    await app.listen(port, (err) => {
-      if (err) {
-        gLogger.log(err);
-      }
-      gLogger.info(
-        `${webServices
-          .map((service) => {
-            return service.name;
-          })
-          .join(",")} running on port ${port}`,
-      );
-    });
-  } catch (e) {
-    gLogger.error(
-      `Error occurred initializing service\n ${e.message}\n ${e.stack ?? {}}`,
-    );
   }
 }
 
