@@ -211,6 +211,8 @@ appDataPath: "/appDataRoot/appdata/serviceName/"
 ```
 {
   "port": 3000, // Global port
+  "logLevel": "info",
+  "noLogFile": false,
   "services": {
     "friendlyLocalServiceName": {
       "port": 3001, // Optional port override
@@ -229,6 +231,11 @@ appDataPath: "/appDataRoot/appdata/serviceName/"
   }
 }
 ```
+
+## ENV variables
+
+INIT_LOG_LEVEL - log level for init process.
+WITH_LOG_FILE - Whether to write init logs to file.
 
 ### Running
 

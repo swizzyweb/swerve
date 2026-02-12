@@ -6,23 +6,26 @@ import {
   ISwerveManager,
   SwerveManager,
 } from "@swizzyweb/swerve-manager";
-import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
+import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-common";
 import os from "node:os";
 import process from "node:process";
 
 export async function runV2(): Promise<ISwerveManager> {
-  let gLogger = new SwizzyWinstonLogger({
-    port: 0,
-    logLevel: process.env.LOG_LEVEL ?? "info",
-    appDataRoot: ".",
-    appName: `swerve`,
-    ownerName: "swerve",
-    hostName: os.hostname(),
-    pid: process.pid,
-  });
-
+  let gLogger;
+  const initLogLevel = process.env.INIT_LOG_LEVEL ?? "info";
+  const withLogFile = process.env.WITH_LOG_FILE ?? false;
   const swerveManager: ISwerveManager = new SwerveManager({});
   try {
+    gLogger = new SwizzyWinstonLogger({
+      port: 0,
+      logLevel: initLogLevel,
+      appDataRoot: ".",
+      appName: `swerve`,
+      ownerName: "swerve",
+      hostName: os.hostname(),
+      pid: process.pid,
+      noLogFile: !withLogFile,
+    });
     const args = await getArgs(process.argv, gLogger);
     await swerveManager.run({ args });
     return swerveManager;
@@ -51,6 +54,7 @@ export async function runWithApp(props: RunWithAppArgs) {
     appName: `swerve`,
     hostName: os.hostname(),
     pid: process.pid,
+    noLogFile: args.noLogFile,
   });
 
   try {
