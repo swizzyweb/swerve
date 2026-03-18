@@ -5,8 +5,7 @@ import http from "node:http";
 import os from "node:os";
 import { run } from "./main.js";
 import process from "node:process";
-import { BrowserLogger } from "@swizzyweb/swizzy-common";
-import { SwizzyWinstonLogger } from "@swizzyweb/swizzy-web-service";
+import { SwizzyWinstonLogger, BrowserLogger } from "@swizzyweb/swizzy-common";
 import { getArgs } from "@swizzyweb/swerve-manager";
 
 /**

@@ -93,7 +93,7 @@ export async function runWithApp(props: RunWithAppArgs) {
     return webServices;
   } catch (e) {
     gLogger.error(
-      `Error occurred initializing service\n ${e.message}\n ${e.stack ?? {}}`,
+      `Error occurred initializing service\n ${e}\n ${e.stack ?? {}}`,
     );
   }
 }
