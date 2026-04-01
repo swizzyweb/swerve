@@ -2,13 +2,11 @@
   "version": "3",
   "packages": {
     "specifiers": {
-      "npm:@swizzyweb/swerve-manager@^0.3.1": "npm:@swizzyweb/swerve-manager@0.3.2",
-      "npm:@swizzyweb/swizzy-common@^0.3.3": "npm:@swizzyweb/swizzy-common@0.3.3",
-      "npm:@swizzyweb/swizzy-web-service@^0.6.1": "npm:@swizzyweb/swizzy-web-service@0.6.1_winston@3.19.0",
+      "npm:@swizzyweb/swerve-manager@^0.3.6": "npm:@swizzyweb/swerve-manager@0.3.6",
+      "npm:@swizzyweb/swizzy-common@^0.3.6": "npm:@swizzyweb/swizzy-common@0.3.6_winston@3.19.0",
+      "npm:@swizzyweb/swizzy-web-service@^0.6.3": "npm:@swizzyweb/swizzy-web-service@0.6.3_winston@3.19.0",
       "npm:@types/express@^5.0.6": "npm:@types/express@5.0.6",
       "npm:@types/node@^22.18.6": "npm:@types/node@22.19.7",
-      "npm:bun@^1.2.22": "npm:bun@1.3.8",
-      "npm:deno@^2.5.2": "npm:deno@2.6.8",
       "npm:typescript@^5.9.2": "npm:typescript@5.9.3"
     },
     "npm": {
@@ -24,74 +22,6 @@
           "kuler": "kuler@2.0.0"
         }
       },
-      "@deno/darwin-arm64@2.6.8": {
-        "integrity": "sha512-Q3STbV/+nr+xhL/bD4Av+yg5XNGuhTdTay4b0q0wU5GLlcwMsNXQ1mjrfT9CKdG/VuF30a8wE/u/sIq7bZsViQ==",
-        "dependencies": {}
-      },
-      "@deno/darwin-x64@2.6.8": {
-        "integrity": "sha512-buz9Ncv/hQYUwcHIrv0g7fIKZWoO1OOfInVB9XK35hteOuknzOaN+X0uFI/idOyae6HqVKG31S2Wk5N99mSJ1g==",
-        "dependencies": {}
-      },
-      "@deno/linux-arm64-glibc@2.6.8": {
-        "integrity": "sha512-U/jmXKFnbD0VnCuqISf8lbYp9RxRVO8vgSPdLHaUU4+VFCPx2nO3NPGJO1cZvHobTAsE0CzCH+21AyA/7S1V9g==",
-        "dependencies": {}
-      },
-      "@deno/linux-x64-glibc@2.6.8": {
-        "integrity": "sha512-oY6qIbyrEHt+rzk7oHJ8KZgJ3mOQ1econRWcXlm/wOXORVDn7l9rEoY0vlOf4Qvv22tPTD5Jn1bxm6WBZBXmog==",
-        "dependencies": {}
-      },
-      "@deno/win32-arm64@2.6.8": {
-        "integrity": "sha512-Zt5/R64VSuDyWsVBLTYH7BpxtdVwxUGyL2AMteSm45a+i1zaEbpwzJ0/lZM/TrBXIohu5+CRm/NKUPrGkkZAAA==",
-        "dependencies": {}
-      },
-      "@deno/win32-x64@2.6.8": {
-        "integrity": "sha512-gHI1K9vmCT+gtJlYnCLl1pBdqOwBoQs2E2e6MGtL0ncrU7VqOiZ3jD3f2QZnnsfZEhj/khSIjkVlTMIUSZtIcg==",
-        "dependencies": {}
-      },
-      "@oven/bun-darwin-aarch64@1.3.8": {
-        "integrity": "sha512-hPERz4IgXCM6Y6GdEEsJAFceyJMt29f3HlFzsvE/k+TQjChRhar6S+JggL35b9VmFfsdxyCOOTPqgnSrdV0etA==",
-        "dependencies": {}
-      },
-      "@oven/bun-darwin-x64-baseline@1.3.8": {
-        "integrity": "sha512-ArHVWpCRZI3vGLoN2/8ud8Kzqlgn1Gv+fNw+pMB9x18IzgAEhKxFxsWffnoaH21amam4tAOhpeewRIgdNtB0Cw==",
-        "dependencies": {}
-      },
-      "@oven/bun-darwin-x64@1.3.8": {
-        "integrity": "sha512-SaWIxsRQYiT/eA60bqA4l8iNO7cJ6YD8ie82RerRp9voceBxPIZiwX4y20cTKy5qNaSGr9LxfYq7vDywTipiog==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-aarch64-musl@1.3.8": {
-        "integrity": "sha512-HvJmhrfipL7GtuqFz6xNpmf27NGcCOMwCalPjNR6fvkLpe8A7Z1+QbxKKjOglelmlmZc3Vi2TgDUtxSqfqOToQ==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-aarch64@1.3.8": {
-        "integrity": "sha512-rq0nNckobtS+ONoB95/Frfqr8jCtmSjjjEZlN4oyUx0KEBV11Vj4v3cDVaWzuI34ryL8FCog3HaqjfKn8R82Tw==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-x64-baseline@1.3.8": {
-        "integrity": "sha512-3IkS3TuVOzMqPW6Gg9/8FEoKF/rpKZ9DZUfNy9GQ54+k4PGcXpptU3+dy8D4iDFCt4qe6bvoiAOdM44OOsZ+Wg==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-x64-musl-baseline@1.3.8": {
-        "integrity": "sha512-5g8XJwHhcTh8SGoKO7pR54ILYDbuFkGo+68DOMTiVB5eLxuLET+Or/camHgk4QWp3nUS5kNjip4G8BE8i0rHVQ==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-x64-musl@1.3.8": {
-        "integrity": "sha512-o7Jm5zL4aw9UBs3BcZLVbgGm2V4F10MzAQAV+ziKzoEfYmYtvDqRVxgKEq7BzUOVy4LgfrfwzEXw5gAQGRrhQQ==",
-        "dependencies": {}
-      },
-      "@oven/bun-linux-x64@1.3.8": {
-        "integrity": "sha512-YDgqVx1MI8E0oDbCEUSkAMBKKGnUKfaRtMdLh9Bjhu7JQacQ/ZCpxwi4HPf5Q0O1TbWRrdxGw2tA2Ytxkn7s1Q==",
-        "dependencies": {}
-      },
-      "@oven/bun-windows-x64-baseline@1.3.8": {
-        "integrity": "sha512-K6qBUKAZLXsjAwFxGTG87dsWlDjyDl2fqjJr7+x7lmv2m+aSEzmLOK+Z5pSvGkpjBp3LXV35UUgj8G0UTd0pPg==",
-        "dependencies": {}
-      },
-      "@oven/bun-windows-x64@1.3.8": {
-        "integrity": "sha512-UDI3rowMm/tI6DIynpE4XqrOhr+1Ztk1NG707Wxv2nygup+anTswgCwjfjgmIe78LdoRNFrux2GpeolhQGW6vQ==",
-        "dependencies": {}
-      },
       "@so-ric/colorspace@1.1.6": {
         "integrity": "sha512-/KiKkpHNOBgkFJwu9sh48LkHSMYGyuTcSFK/qMBdnOAlrRJzRSXAOFB5qwzaVQuDl8wAvHVMkaASQDReTahxuw==",
         "dependencies": {
@@ -99,29 +29,32 @@
           "text-hex": "text-hex@1.0.0"
         }
       },
-      "@swizzyweb/express-unuse@1.0.1": {
-        "integrity": "sha512-VxpE9mMpSMBbIP0mlfNics58FVXirwIL/aaX16Eu4CbroTbADuUXwq/e1MizbFOKliaQgA4pdBeD2DHhSwVgPA==",
+      "@swizzyweb/express-unuse@1.0.2": {
+        "integrity": "sha512-nEp40TVlmnI2xUcbc/wfbOkRbwERz1T7e1LKFSL97IUDO6GRFd+GPPvMCNe1m2KvWDAOfu+iBX9dBDJsuNsb7A==",
         "dependencies": {
           "express": "express@5.2.1"
         }
       },
-      "@swizzyweb/swerve-manager@0.3.2": {
-        "integrity": "sha512-OlR8KlN/G+CpPhMGswH7Sh+i45exLsHQyq274NTc9ESYI2e/r5PU+wqMGg5GGu7rd7JlM6Hh8GECVI6KZJpODQ==",
+      "@swizzyweb/swerve-manager@0.3.6": {
+        "integrity": "sha512-kYRyPBc1TnfeTJybv/9aYVWnKtew75EH3p96soy7qcOAOfeHvPByWK7C7vpWVNttHPdiRe3q0MUrJn5S7Q4TWQ==",
         "dependencies": {
-          "@swizzyweb/swizzy-common": "@swizzyweb/swizzy-common@0.3.3",
-          "@swizzyweb/swizzy-web-service": "@swizzyweb/swizzy-web-service@0.6.1_winston@3.19.0",
+          "@swizzyweb/swizzy-common": "@swizzyweb/swizzy-common@0.3.6_winston@3.19.0",
+          "@swizzyweb/swizzy-web-service": "@swizzyweb/swizzy-web-service@0.6.3_winston@3.19.0",
           "express": "express@5.2.1"
         }
       },
-      "@swizzyweb/swizzy-common@0.3.3": {
-        "integrity": "sha512-Xfuqzl9C71wfwN/4Pohx3dQDSFCgyhveGxsWvoGejxDrqvRpG0SIQDPKZ0Uh4YHX62ufA/24KcxIa4xVBvwL1A==",
-        "dependencies": {}
-      },
-      "@swizzyweb/swizzy-web-service@0.6.1_winston@3.19.0": {
-        "integrity": "sha512-6Onr7U+dHXIDL9XNgFV0eiFz48QtRfo6EnH0b+q7XF9x87Q3pCOktGt3esUmdCPqCREK7VDlwXThaEeBnCcQcw==",
+      "@swizzyweb/swizzy-common@0.3.6_winston@3.19.0": {
+        "integrity": "sha512-Z8jP6shZOnh5p97S3WzyJ1WOFdvgq70Oi1bWbPBwg1VcgoPIN8JHvqgWOSyWt6xp/7ibw4eGohY+1BPDz7oSiw==",
         "dependencies": {
-          "@swizzyweb/express-unuse": "@swizzyweb/express-unuse@1.0.1",
-          "@swizzyweb/swizzy-common": "@swizzyweb/swizzy-common@0.3.3",
+          "winston": "winston@3.19.0",
+          "winston-daily-rotate-file": "winston-daily-rotate-file@5.0.0_winston@3.19.0"
+        }
+      },
+      "@swizzyweb/swizzy-web-service@0.6.3_winston@3.19.0": {
+        "integrity": "sha512-TpRmonWov3a8eVt9Qif10d8IfqV1Pcrq14dmD+6bkHf2EO1ibo5dGwCSNS8QBfnvVJ2rHClr2vhemOHkEnsDVw==",
+        "dependencies": {
+          "@swizzyweb/express-unuse": "@swizzyweb/express-unuse@1.0.2",
+          "@swizzyweb/swizzy-common": "@swizzyweb/swizzy-common@0.3.6_winston@3.19.0",
           "express": "express@5.2.1",
           "winston": "winston@3.19.0",
           "winston-daily-rotate-file": "winston-daily-rotate-file@5.0.0_winston@3.19.0"
@@ -216,25 +149,9 @@
           "http-errors": "http-errors@2.0.1",
           "iconv-lite": "iconv-lite@0.7.2",
           "on-finished": "on-finished@2.4.1",
-          "qs": "qs@6.14.1",
+          "qs": "qs@6.15.0",
           "raw-body": "raw-body@3.0.2",
           "type-is": "type-is@2.0.1"
-        }
-      },
-      "bun@1.3.8": {
-        "integrity": "sha512-TmmtMGQSXY3o0enSMMkvR5g7Dw/2n2oylAUprLVdqA8pDPBoKbzgOmmgHOtvnfRznFppl+Gu2cid3vgAjcNoSg==",
-        "dependencies": {
-          "@oven/bun-darwin-aarch64": "@oven/bun-darwin-aarch64@1.3.8",
-          "@oven/bun-darwin-x64": "@oven/bun-darwin-x64@1.3.8",
-          "@oven/bun-darwin-x64-baseline": "@oven/bun-darwin-x64-baseline@1.3.8",
-          "@oven/bun-linux-aarch64": "@oven/bun-linux-aarch64@1.3.8",
-          "@oven/bun-linux-aarch64-musl": "@oven/bun-linux-aarch64-musl@1.3.8",
-          "@oven/bun-linux-x64": "@oven/bun-linux-x64@1.3.8",
-          "@oven/bun-linux-x64-baseline": "@oven/bun-linux-x64-baseline@1.3.8",
-          "@oven/bun-linux-x64-musl": "@oven/bun-linux-x64-musl@1.3.8",
-          "@oven/bun-linux-x64-musl-baseline": "@oven/bun-linux-x64-musl-baseline@1.3.8",
-          "@oven/bun-windows-x64": "@oven/bun-windows-x64@1.3.8",
-          "@oven/bun-windows-x64-baseline": "@oven/bun-windows-x64-baseline@1.3.8"
         }
       },
       "bytes@3.1.2": {
@@ -298,17 +215,6 @@
         "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
         "dependencies": {
           "ms": "ms@2.1.3"
-        }
-      },
-      "deno@2.6.8": {
-        "integrity": "sha512-eJ+D9eu4YUtfec3F4nFRK06TKrGH+S8BasyqKIi2vKD11fI5kmgjYu08B4eheyQrfHj5hjGvB/dCdkfsAlsLzA==",
-        "dependencies": {
-          "@deno/darwin-arm64": "@deno/darwin-arm64@2.6.8",
-          "@deno/darwin-x64": "@deno/darwin-x64@2.6.8",
-          "@deno/linux-arm64-glibc": "@deno/linux-arm64-glibc@2.6.8",
-          "@deno/linux-x64-glibc": "@deno/linux-x64-glibc@2.6.8",
-          "@deno/win32-arm64": "@deno/win32-arm64@2.6.8",
-          "@deno/win32-x64": "@deno/win32-x64@2.6.8"
         }
       },
       "depd@2.0.0": {
@@ -380,7 +286,7 @@
           "once": "once@1.4.0",
           "parseurl": "parseurl@1.3.3",
           "proxy-addr": "proxy-addr@2.0.7",
-          "qs": "qs@6.14.1",
+          "qs": "qs@6.15.0",
           "range-parser": "range-parser@1.2.1",
           "router": "router@2.2.0",
           "send": "send@1.2.1",
@@ -585,8 +491,8 @@
           "ipaddr.js": "ipaddr.js@1.9.1"
         }
       },
-      "qs@6.14.1": {
-        "integrity": "sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==",
+      "qs@6.15.0": {
+        "integrity": "sha512-mAZTtNCeetKMH+pSjrb76NAM8V9a05I9aBZOHztWy/UqcJdQYNsf59vrRKWnojAT9Y+GbIvoTBC++CPHqpDBhQ==",
         "dependencies": {
           "side-channel": "side-channel@1.1.0"
         }
@@ -797,13 +703,11 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@swizzyweb/swerve-manager@^0.3.1",
-        "npm:@swizzyweb/swizzy-common@^0.3.3",
-        "npm:@swizzyweb/swizzy-web-service@^0.6.1",
+        "npm:@swizzyweb/swerve-manager@^0.3.6",
+        "npm:@swizzyweb/swizzy-common@^0.3.6",
+        "npm:@swizzyweb/swizzy-web-service@^0.6.3",
         "npm:@types/express@^5.0.6",
         "npm:@types/node@^22.18.6",
-        "npm:bun@^1.2.22",
-        "npm:deno@^2.5.2",
         "npm:typescript@^5.9.2"
       ]
     }
